@@ -14,4 +14,6 @@ FROM nginxinc/nginx-unprivileged:1.27-alpine AS runtime
 COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /workspace/dist /usr/share/nginx/html
 
+ENV NGINX_ENVSUBST_FILTER="BACKEND_"
+
 EXPOSE 8080
