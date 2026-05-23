@@ -99,7 +99,7 @@ jobs:
           COMPOSE
           sed -i 's#__MYSQL_ROOT_PASSWORD__#${{ secrets.MYSQL_ROOT_PASSWORD }}#g' docker-compose.yml
           sed -i 's#__MYSQL_DATABASE__#${{ secrets.MYSQL_DATABASE }}#g' docker-compose.yml
-          docker compose up -d
+          docker compose up -d || docker compose up -d
           docker ps
           docker volume ls
           SCRIPT
@@ -188,7 +188,7 @@ jobs:
           sed -i 's#__FRONTEND_IMAGE__#${{ env.FRONTEND_IMAGE }}#g' docker-compose.yml
           sed -i 's#__BACKEND_PRIVATE_IP__#${{ secrets.BACKEND_PRIVATE_IP }}#g' docker-compose.yml
           docker compose pull
-          docker compose up -d
+          docker compose up -d || docker compose up -d
           docker image prune -f
           docker ps
           SCRIPT
