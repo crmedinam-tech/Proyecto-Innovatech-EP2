@@ -21,6 +21,7 @@ export default function AvanceModal({ proyecto, onClose }) {
       fecha: new Date().toISOString().split("T")[0],
       descripcion,
       completado: false,
+      proyectoId: proyecto.id,
     });
     setDescripcion("");
     load();
