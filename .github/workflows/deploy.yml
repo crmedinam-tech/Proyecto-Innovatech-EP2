@@ -111,7 +111,7 @@ jobs:
             --parameters commands="$COMMANDS" \
             --query "Command.CommandId" --output text)
           aws ssm wait command-executed --command-id "$COMMAND_ID" --instance-id "${{ secrets.DATA_INSTANCE_ID }}"
-          aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "${{ secrets.DATA_INSTANCE_ID }}" --query '{Status:Status,Stdout:StandardOutputContent,Stderr:StandardErrorContent}' --output text
+          aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "..." --query '{Status:Status,Stdout:StandardOutputContent,Stderr:StandardErrorContent}' --output text || true
 
       - name: Deploy Backends privados
         run: |
@@ -150,8 +150,8 @@ jobs:
           sed -i 's#__DATA_PRIVATE_IP__#${{ secrets.DATA_PRIVATE_IP }}#g' docker-compose.yml
           sed -i 's#__MYSQL_DATABASE__#${{ secrets.MYSQL_DATABASE }}#g' docker-compose.yml
           sed -i 's#__MYSQL_ROOT_PASSWORD__#${{ secrets.MYSQL_ROOT_PASSWORD }}#g' docker-compose.yml
-          docker-compose up -d || docker compose up -d
           docker-compose pull || docker compose pull
+          docker-compose up -d || docker compose up -d
           docker image prune -f
           docker ps
           SCRIPT
@@ -163,7 +163,7 @@ jobs:
             --parameters commands="$COMMANDS" \
             --query "Command.CommandId" --output text)
           aws ssm wait command-executed --command-id "$COMMAND_ID" --instance-id "${{ secrets.BACKEND_INSTANCE_ID }}"
-          aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "${{ secrets.BACKEND_INSTANCE_ID }}" --query '{Status:Status,Stdout:StandardOutputContent,Stderr:StandardErrorContent}' --output text
+          aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "..." --query '{Status:Status,Stdout:StandardOutputContent,Stderr:StandardErrorContent}' --output text || true
 
       - name: Deploy Frontend publico
         run: |
@@ -180,15 +180,15 @@ jobs:
               container_name: innovatech-frontend
               restart: unless-stopped
               environment:
-                BACKEND_PROYECTOS_URL: http://__backend_private_ip__:8080/
-                BACKEND_AVANCES_URL: http://__backend_private_ip__:8081/
+                BACKEND_PRIVATE_IP: ${{ secrets.BACKEND_PRIVATE_IP }}
+                BACKEND_PROYECTOS_URL: http://${{ secrets.BACKEND_PRIVATE_IP }}:8080
+                BACKEND_AVANCES_URL: http://${{ secrets.BACKEND_PRIVATE_IP }}:8081
               ports:
                 - "80:8080"
           COMPOSE
           sed -i 's#__FRONTEND_IMAGE__#${{ env.FRONTEND_IMAGE }}#g' docker-compose.yml
-          sed -i 's#BACKEND_PRIVATE_IP#${{ secrets.BACKEND_PRIVATE_IP }}#g' docker-compose.yml
-          docker-compose up -d || docker compose up -d
           docker-compose pull || docker compose pull
+          docker-compose up -d || docker compose up -d
           docker image prune -f
           docker ps
           SCRIPT
@@ -200,4 +200,4 @@ jobs:
             --parameters commands="$COMMANDS" \
             --query "Command.CommandId" --output text)
           aws ssm wait command-executed --command-id "$COMMAND_ID" --instance-id "${{ secrets.FRONTEND_INSTANCE_ID }}"
-          aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "${{ secrets.FRONTEND_INSTANCE_ID }}" --query '{Status:Status,Stdout:StandardOutputContent,Stderr:StandardErrorContent}' --output text
+          aws ssm get-command-invocation --command-id "$COMMAND_ID" --instance-id "..." --query '{Status:Status,Stdout:StandardOutputContent,Stderr:StandardErrorContent}' --output text || true
