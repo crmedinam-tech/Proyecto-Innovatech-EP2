@@ -150,8 +150,8 @@ jobs:
           sed -i 's#__DATA_PRIVATE_IP__#${{ secrets.DATA_PRIVATE_IP }}#g' docker-compose.yml
           sed -i 's#__MYSQL_DATABASE__#${{ secrets.MYSQL_DATABASE }}#g' docker-compose.yml
           sed -i 's#__MYSQL_ROOT_PASSWORD__#${{ secrets.MYSQL_ROOT_PASSWORD }}#g' docker-compose.yml
-          docker-compose up -d || docker compose up -d
           docker-compose pull || docker compose pull
+          docker-compose up -d || docker compose up -d
           docker image prune -f
           docker ps
           SCRIPT
@@ -187,8 +187,8 @@ jobs:
                 - "80:8080"
           COMPOSE
           sed -i 's#__FRONTEND_IMAGE__#${{ env.FRONTEND_IMAGE }}#g' docker-compose.yml
-          docker-compose up -d || docker compose up -d
           docker-compose pull || docker compose pull
+          docker-compose up -d || docker compose up -d
           docker image prune -f
           docker ps
           SCRIPT
