@@ -180,8 +180,9 @@ jobs:
               container_name: innovatech-frontend
               restart: unless-stopped
               environment:
-                BACKEND_PROYECTOS_URL: http://__backend_private_ip__:8080/
-                BACKEND_AVANCES_URL: http://__backend_private_ip__:8081/
+                BACKEND_PRIVATE_IP: ${{ secrets.BACKEND_PRIVATE_IP }}
+                BACKEND_PROYECTOS_URL: http://${{ secrets.BACKEND_PRIVATE_IP }}:8080
+                BACKEND_AVANCES_URL: http://${{ secrets.BACKEND_PRIVATE_IP }}:8081
               ports:
                 - "80:8080"
           COMPOSE
